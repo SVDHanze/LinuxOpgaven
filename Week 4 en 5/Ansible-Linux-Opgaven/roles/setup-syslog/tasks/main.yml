@@ -1,0 +1,63 @@
+---
+# This task update and upgrade server
+# name - define name of task
+# become - we need sudo privileges, so we set for this field value "yes"
+# apt - This define command, which we want to use - because we are using Ubuntu 20.04, i choose "apt"
+
+
+- name: Updating & Upgrading
+  become: yes
+  apt:
+    upgrade: yes
+    update_cache: yes
+    force_apt_get: yes
+    cache_valid_time: 3600
+
+# After updating we will now open up port 514 (left in code) and install Syslog-NG
+# become - again, we need sudo privileges, so we set for this field value "yes"
+# apt/name - under this fields we define all packages, which we need for basic usage.
+
+
+#- name: Install UFW Firewall and Firewalld
+#  become: yes
+#  apt: 
+#    name:
+#      - ufw
+#      - firewalld
+
+#- name: Enable UFW Firewall and open port TCP/514
+#  become: yes
+#  community.general.ufw:
+#       state: enabled
+#       rule: allow
+#       port: '514'
+#       proto: tcp
+
+- name: Installing Syslog-NG
+  become: yes
+  apt:
+    name: 
+      - syslog-ng
+
+# These steps will get rid of the /etc/syslog-ng-syslog-ng.conf file. Then a file with the client information will be copied from the server to the client and the ip will be changed.
+
+- name: Delete old syslog-ng file
+  become: yes
+  file: path=/etc/syslog-ng/syslog-ng.conf state=absent
+
+- name: Move new syslog file to the client
+  become: yes
+  copy: 
+       src: ~/Ansible-Linux-Opgaven/syslog-ng.conf
+       dest: /etc/syslog-ng/syslog-ng.conf
+
+- name: Delete old tty10.conf file
+  become: yes
+  file: path=/usr/share/syslog-ng/include/scl/system/tty10.conf state=absent
+
+- name: Move new tty10.conf file to the client
+  become: yes
+  copy: 
+       src: ~/Ansible-Linux-Opgaven/tty10.conf
+       dest: /usr/share/syslog-ng/include/scl/system/tty10.conf
+

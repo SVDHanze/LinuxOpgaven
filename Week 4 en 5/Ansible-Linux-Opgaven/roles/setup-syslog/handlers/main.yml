@@ -1,0 +1,13 @@
+---
+# This is last step, which starts, restarts and enables syslog-ng
+- name: Start Syslog-NG
+  become: yes
+  service: name=syslog-ng state=started
+
+- name: Restart Syslog-NG
+  become: yes
+  service: name=syslog-ng state=restarted
+
+- name: Enable Syslog-NG
+  become: yes
+  service: name=syslog-ng enabled=true
