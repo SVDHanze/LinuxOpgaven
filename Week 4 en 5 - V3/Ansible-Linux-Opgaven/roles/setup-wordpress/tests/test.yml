@@ -1,5 +1,0 @@
----
-- hosts: localhost
-#  remote_user: skylar
-  roles:
-    - setup-wordpress

@@ -1,5 +1,0 @@
----
-- hosts: Docker
-#  remote_user: skylar
-  roles:
-    - setup-docker

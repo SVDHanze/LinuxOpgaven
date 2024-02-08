@@ -1,7 +1,0 @@
----
-# Contains info to set up the Docker containers with. The amount, name, image and the command the container will run.
-
-container_count: 1
-default_container_name: docker
-default_container_image: ubuntu
-default_container_command: sleep 1

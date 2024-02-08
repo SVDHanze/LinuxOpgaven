@@ -1,5 +1,0 @@
----
-- hosts: MonLog
-#  remote_user: skylar
-  roles:
-    - setup-syslog
