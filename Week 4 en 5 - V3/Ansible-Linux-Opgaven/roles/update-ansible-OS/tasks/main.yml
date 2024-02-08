@@ -1,0 +1,13 @@
+---
+# This task updates and upgrades the local server.
+# name - define name of task.
+# become - we need sudo privileges, so we set for this field value "yes".
+# apt - uses the apt command on the remote to install packages.
+
+- name: Updating & Upgrading
+  become: yes
+  apt:
+    upgrade: yes
+    update_cache: yes
+    cache_valid_time: 3600
+

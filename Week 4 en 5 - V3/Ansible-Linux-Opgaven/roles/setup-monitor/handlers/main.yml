@@ -1,0 +1,17 @@
+---
+# This is last step, which starts, restarts and enables SNMPD and UFW
+- name: Restart SNMPD
+  become: yes
+  service: name=snmpd state=restarted
+
+- name: Enable SNMPD
+  become: yes
+  service: name=snmpd enabled=true
+
+- name: Enable UFW
+  become: yes
+  service: name=ufw enabled=true
+
+- name: Reload UFW
+  become: yes
+  service: name=ufw state=restarted
