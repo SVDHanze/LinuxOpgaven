@@ -1,0 +1,38 @@
+# This section is used for connect to a server
+# name - this field is used for naming task
+# hosts - in this field we are define hostname/server, in which we want to connect
+# remote_user - this field define user, which we want to use for connect into server
+# become - because we dont want to use root user, we must use sudo privilleges and for this we must set value "yes"
+  
+- name: Updating OS & Ansible on Server
+  hosts: ServerUpgrade
+  become: yes
+  vars: 
+       ansible_python_interpreter: /usr/bin/python3
+  roles:
+    - update-ansible-OS
+
+- name : Setting up monitoring & logging on remote
+  hosts: MonLog
+  become: yes
+  vars: 
+       ansible_python_interpreter: /usr/bin/python3
+  roles: 
+    - setup-monitor
+    - setup-syslog
+
+- name: Setting up Docker on remote
+  hosts: Docker
+  become: yes
+  vars:
+       ansible_python_interpreter: /usr/bin/python3
+  roles: 
+    - setup-docker
+
+- name: Setting up WordPress on remote
+  hosts: WordPress
+  become: yes
+  vars:
+       ansible_python_interpreter: /usr/bin/python3
+  roles: 
+    - setup-wordpress

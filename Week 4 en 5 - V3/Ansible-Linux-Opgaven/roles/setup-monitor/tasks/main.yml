@@ -1,0 +1,83 @@
+---
+# This task updates and upgrades the remote.
+# name - define name of task.
+# become - we need sudo privileges, so we set for this field value "yes".
+# apt - uses the apt command on the remote to install packages.
+
+- name: Updating & Upgrading Remote
+  become: yes
+  apt:
+    upgrade: yes
+    update_cache: yes
+    force_apt_get: yes
+    cache_valid_time: 3600
+
+# UFW will be checked for the installation and the SNMP port with the connection to this server will be opened.
+
+- name: Install and check UFW Firewall
+  become: yes
+  apt: 
+    name:
+      - ufw
+
+- name: Enable UFW Firewall and open port 161/UDP for SNMP
+  become: yes
+  community.general.ufw:
+       state: enabled
+       rule: allow
+       port: '161'
+       proto: udp
+
+- name: Enable traffic to the Cacti Server
+  become: yes
+  community.general.ufw:
+       rule: allow
+       from_ip: 192.168.100.4 
+
+# The Packages for SNMP and SNMPD will be installed to allow the logs for Cacti.
+
+- name: Installing SNMP(D)
+  become: yes
+  apt:
+    name: 
+      - snmp
+      - snmpd
+
+# These steps update the /etc/snmp/snmpd.conf file to register it to the Cacti monitoring service
+
+- name: Changing location and contact
+  become: yes
+  replace:
+    path: "/etc/snmp/snmpd.conf"
+    regexp: "sysLocation.*\nsysContact.*"
+    replace: 'sysLocation    Eenrum, Netherlands\nsysContact     r.van.duinen@st.hanze.nl'
+
+- name: Changing agentadress
+  become: yes
+  replace:
+    path: "/etc/snmp/snmpd.conf"
+    regexp: "^agentaddress.*]$"
+    replace: "agentaddress  udp:{{ ansible_ssh_host }}:161"
+
+- name: Checking if double view directive
+  become: yes
+  replace:
+    path: "/etc/snmp/snmpd.conf"
+    regexp: "^view.*80$"
+    replace: '[\b]'
+
+- name: Adding view directive
+  become: yes
+  replace:
+    path: "/etc/snmp/snmpd.conf"
+    regexp: "^(view.*1.1)$"
+    replace: 'view   all   included   .1   80\n\1'
+
+- name: Changing rocommunity
+  become: yes
+  replace:
+    path: "/etc/snmp/snmpd.conf"
+    regexp: "^rocommunity  public.*"
+    replace: 'rocommunity  SkylarCacti default -V all'
+  notify: Reload UFW
+  notify: Restart SNMPD
