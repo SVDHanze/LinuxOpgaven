@@ -6,5 +6,5 @@ sudo apt-get install ufw -y
 sudo ufw allow ssh
 sudo ufw reload
 sudo ufw enable
-sudo systemctl enable ssh-server
+sudo systemctl enable ssh
 sudo systemctl enable ufw
